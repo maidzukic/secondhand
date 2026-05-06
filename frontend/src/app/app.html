@@ -1,0 +1,45 @@
+<header class="border-b border-slate-200 bg-white sticky top-0 z-50">
+  <div class="container-app py-3 flex items-center justify-between gap-4">
+    <a routerLink="/" class="font-bold text-lg text-slate-900">
+      SecondHand<span class="text-indigo-600">Hub</span>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-4 text-sm">
+      <a routerLink="/" class="navlink">Home</a>
+      <a routerLink="/create" class="navlink">Create</a>
+      <a routerLink="/my-products" class="navlink">My Products</a>
+      <a routerLink="/chats" class="navlink">Chats</a>
+      <a routerLink="/orders-buyer" class="navlink">My Orders</a>
+      <a routerLink="/orders-seller" class="navlink">Requests</a>
+      <a *ngIf="auth.getUser()?.role === 'admin'" routerLink="/admin" class="navlink">Admin</a>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <ng-container *ngIf="auth.isLoggedIn(); else loggedOut">
+        <span class="badge hidden sm:inline">{{ auth.getUser()?.name }}</span>
+        <a routerLink="/profile" class="btn btn-ghost">Profile</a>
+        <button class="btn btn-primary" (click)="logout()">Logout</button>
+      </ng-container>
+
+      <ng-template #loggedOut>
+        <a routerLink="/login" class="btn btn-ghost">Login</a>
+        <a routerLink="/register" class="btn btn-primary">Register</a>
+      </ng-template>
+    </div>
+
+<ng-container *ngIf="isChatRoute(); else normalLayout">
+  <router-outlet></router-outlet>
+</ng-container>
+
+<ng-template #normalLayout>
+  <main class="container-app py-6">
+    <router-outlet></router-outlet>
+  </main>
+</ng-template>
+
+  </div>
+</header>
+
+<main class="container-app py-6">
+  <router-outlet></router-outlet>
+</main>

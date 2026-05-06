@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Buttons */
+.btn { @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl border border-slate-200 text-sm font-extrabold transition-all; }
+.btn-primary { @apply bg-slate-900 text-white border-slate-900 hover:brightness-95; }
+.btn-ghost { @apply bg-white text-slate-800 hover:bg-slate-50; }
+.btn-danger { @apply bg-rose-600 text-white border-rose-600 hover:brightness-95 disabled:opacity-50; }
+
+/* Cards */
+.card { @apply bg-white border border-slate-200 rounded-3xl shadow-sm; }
+.card-pad { @apply p-5; }
+
+/* Inputs */
+.input { @apply px-3 py-2 rounded-2xl border border-slate-200 bg-white text-sm outline-none focus:ring-4 focus:ring-slate-200 focus:border-slate-300 w-full; }
+.textarea { @apply px-3 py-2 rounded-2xl border border-slate-200 bg-white text-sm outline-none focus:ring-4 focus:ring-slate-200 focus:border-slate-300 w-full resize-none; }
+
+/* Badges */
+.badge { @apply inline-flex items-center px-2 py-1 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-700; }
+.badge-admin { @apply bg-slate-900 text-white; }
+.badge-user { @apply bg-slate-100 text-slate-700; }
+.badge-green { @apply bg-emerald-100 text-emerald-700; }
+.badge-red { @apply bg-rose-100 text-rose-700; }
+.badge-yellow { @apply bg-amber-100 text-amber-700; }
+
+/* KPI cards */
+.kpi { @apply text-left p-4 rounded-3xl border border-slate-200 bg-white hover:bg-slate-50 transition; }
+.kpi-title { @apply font-extrabold text-slate-900; }
+.kpi-sub { @apply text-sm text-slate-600 mt-1; }

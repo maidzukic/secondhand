@@ -1,0 +1,44 @@
+<div class="auth-wrapper">
+  <div class="card overflow-hidden">
+
+    <div class="card-header">
+      <h1 class="card-title">Kreirajte nalog</h1>
+      <p class="card-sub">Započnite kupovinu i prodaju već danas.</p>
+    </div>
+
+    <div class="card-body">
+
+      <div *ngIf="message" class="alert" [ngClass]="success ? 'alert-success' : 'alert-error'">
+        {{ message }}
+      </div>
+
+      <div class="field">
+        <label class="label">Ime i prezime</label>
+        <input class="input" [(ngModel)]="name" placeholder="Maid Zukić" />
+      </div>
+
+      <div class="field">
+        <label class="label">Email</label>
+        <input class="input" [(ngModel)]="email" type="email" placeholder="ime@primjer.com" />
+      </div>
+
+      <div class="field">
+        <label class="label">Lozinka <span class="hint">(min. 6 karaktera)</span></label>
+        <input class="input" [(ngModel)]="password" type="password"
+               placeholder="••••••••" (keydown.enter)="submit()" />
+      </div>
+
+      <button class="btn btn-primary w-full" (click)="submit()" [disabled]="loading">
+        {{ loading ? 'Kreiranje naloga...' : 'Kreiraj nalog' }}
+      </button>
+
+      <p class="auth-footer">
+        Većimate nalog?
+        <a routerLink="/login" class="link">Prijavite se</a>
+      </p>
+
+    </div>
+  </div>
+
+  
+</div>

@@ -1,0 +1,202 @@
+<div class="lightbox-overlay" *ngIf="lightboxOpen" (click)="lightboxOpen=false">
+  <button class="lightbox-close" (click)="lightboxOpen=false">✕</button>
+
+  <button *ngIf="images.length > 1" class="lightbox-nav lightbox-nav--prev"
+          (click)="prevImage($event)">‹</button>
+
+  <img class="lightbox-img" [src]="imgUrl(images[activeIdx]?.image_path)" (click)="$event.stopPropagation()" />
+
+  <button *ngIf="images.length > 1" class="lightbox-nav lightbox-nav--next"
+          (click)="nextImage($event)">›</button>
+
+  <div *ngIf="images.length > 1" class="lightbox-dots">
+    <button *ngFor="let im of images; let i = index"
+            (click)="goToImage(i, $event)"
+            class="lightbox-dot" [class.active]="i === activeIdx">
+    </button>
+  </div>
+</div>
+
+<div class="details-page">
+
+  <a routerLink="/" class="back-link">← Nazad na početnu</a>
+
+  <div *ngIf="loading"   class="card card-pad state-msg">Loading...</div>
+  <div *ngIf="loadError" class="card card-pad state-msg error">{{ loadError }}</div>
+
+  <ng-container *ngIf="data && !loading">
+
+    
+    <div class="product-header">
+      <h1 class="product-title">{{ data.product.title }}</h1>
+      <div class="product-tags">
+        <span class="badge">{{ data.product.category_name }}</span>
+        <span class="badge">{{ data.product.location }}</span>
+        <span *ngIf="data.product.product_condition" class="badge"
+              [ngClass]="data.product.product_condition==='new' ? 'badge-green' : 'badge-yellow'">
+          {{ data.product.product_condition === 'new' ? 'Novo' : 'Polovno' }}
+        </span>
+        <span class="post-date">Objavljeno: {{ data.product.created_at }}</span>
+      </div>
+    </div>
+
+    
+    <div class="details-grid">
+
+      <div class="left-col">
+
+        
+        <div class="card gallery-card">
+          <div class="gallery-main" (click)="openLightbox()">
+            <img *ngIf="images.length"
+                 [src]="imgUrl(images[activeIdx]?.image_path)"
+                 class="gallery-img" />
+            <div *ngIf="!images.length" class="gallery-empty">Nema slika</div>
+
+            <button *ngIf="images.length > 1" class="gallery-nav gallery-nav--prev"
+                    (click)="prevImage($event)">‹</button>
+            <button *ngIf="images.length > 1" class="gallery-nav gallery-nav--next"
+                    (click)="nextImage($event)">›</button>
+
+            <span *ngIf="images.length > 1" class="gallery-counter">
+              {{ activeIdx + 1 }} / {{ images.length }}
+            </span>
+            <span *ngIf="images.length" class="gallery-hint">⛶ Povećaj</span>
+          </div>
+
+          <div *ngIf="images.length > 1" class="gallery-thumbs">
+            <button *ngFor="let im of images; let i = index"
+                    (click)="goToImage(i)"
+                    class="thumb-btn" [class.active]="i === activeIdx">
+              <img [src]="imgUrl(im.image_path)" class="thumb-img" />
+            </button>
+          </div>
+        </div>
+
+        
+        <div class="card card-pad">
+          <h2 class="section-title">Opis</h2>
+          <p class="description-text">{{ data.product.description || 'No description provided.' }}</p>
+        </div>
+
+        
+        <div class="card card-pad">
+          <div class="comments-header">
+            <h2 class="section-title">Komentari</h2>
+            <span class="comments-count">{{ comments.length }}</span>
+          </div>
+
+          
+          <div *ngIf="auth.isLoggedIn()" class="comment-form">
+            <div class="comment-avatar">
+              <img *ngIf="auth.getUser()?.avatar" [src]="imgUrl(auth.getUser()!.avatar!)" class="avatar-img" />
+              <span *ngIf="!auth.getUser()?.avatar" class="avatar-initial">
+                {{ (auth.getUser()?.name || '?')[0].toUpperCase() }}
+              </span>
+            </div>
+            <div class="comment-input-row">
+              <input class="input" [(ngModel)]="newComment"
+                     placeholder="Napiši komentar..."
+                     (keydown.enter)="addComment()" />
+              <button class="btn btn-primary" (click)="addComment()" [disabled]="!newComment.trim()">Objavi</button>
+            </div>
+          </div>
+
+          <div *ngIf="!auth.isLoggedIn()" class="login-prompt">
+            <a routerLink="/login" class="login-link">Prijavite se</a> da bi ostavili komentar.
+          </div>
+
+          <!-- Lista komentara -->
+          <div class="comments-list">
+            <div *ngFor="let c of comments" class="comment-item">
+              <a [routerLink]="['/seller', c.user_id]" class="comment-avatar-link">
+                <div class="comment-avatar small">
+                  <img *ngIf="c.user_avatar" [src]="imgUrl(c.user_avatar)" class="avatar-img" />
+                  <span *ngIf="!c.user_avatar" class="avatar-initial small">
+                    {{ (c.user_name || '?')[0].toUpperCase() }}
+                  </span>
+                </div>
+              </a>
+              <div class="comment-body">
+                <div class="comment-meta">
+                  <a [routerLink]="['/seller', c.user_id]" class="comment-author">{{ c.user_name }}</a>
+                  <span class="comment-date">{{ c.created_at }}</span>
+                  <button *ngIf="canDeleteComment(c)"
+                          class="comment-delete" (click)="deleteComment(c)">Izbriši</button>
+                </div>
+                <p class="comment-text">{{ c.comment_text }}</p>
+              </div>
+            </div>
+            <p *ngIf="comments.length === 0" class="no-comments">Nema komentara. Postani prvi!</p>
+          </div>
+        </div>
+
+      </div>
+
+      
+      <aside class="right-col">
+
+        
+        <div class="card card-pad buy-box">
+          <div class="price">{{ data.product.price }} <span class="price-unit">KM</span></div>
+          <div class="price-location">{{ data.product.location }}</div>
+
+          <div class="action-buttons">
+            <button class="btn btn-primary action-btn" (click)="buyRequest()">Kupi</button>
+            <button class="btn btn-ghost  action-btn" (click)="startChat()">💬 Kontaktirajte prodavača</button>
+            <button class="btn btn-ghost  action-btn" (click)="toggleFavorite()">
+              {{ isFav ? '❤️ Sačuvano' : '🤍 Sačuvaj' }}
+            </button>
+            <button *ngIf="canDeleteProduct()"
+                    class="btn btn-danger action-btn"
+                    (click)="deleteProduct()"
+                    [disabled]="deleting">
+              {{ deleting ? 'Brisanje...' : ' Izbriši oglas' }}
+            </button>
+          </div>
+
+          <div class="product-meta-list">
+            <div class="meta-row">
+              <span class="meta-key">Kategorija</span>
+              <span class="meta-val">{{ data.product.category_name }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">Prodavač</span>
+              <span class="meta-val">{{ sellerName() }}</span>
+            </div>
+            <div *ngIf="data.product?.product_condition" class="meta-row">
+              <span class="meta-key">Stanje</span>
+              <span class="meta-val"
+                    [class.green]="data.product.product_condition==='new'"
+                    [class.amber]="data.product.product_condition==='used'">
+                {{ data.product.product_condition === 'new' ? 'Novo' : 'Korišteno' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="card card-pad">
+          <div class="seller-row">
+            <div class="seller-avatar-wrap">
+              <img *ngIf="data.seller?.avatar" [src]="imgUrl(data.seller.avatar)" class="seller-avatar" />
+              <span *ngIf="!data.seller?.avatar" class="seller-placeholder">👤</span>
+            </div>
+            <div>
+              <div class="seller-name">{{ sellerName() }}</div>
+              <div class="seller-location">{{ data.seller.location || '—' }}</div>
+            </div>
+          </div>
+
+          <p *ngIf="data.seller?.bio" class="seller-bio">{{ data.seller.bio }}</p>
+
+          <a [routerLink]="['/seller', sellerId()]" class="btn btn-ghost full-width top-gap">
+            Pogledaj profil →
+          </a>
+        </div>
+
+      </aside>
+    </div>
+
+  </ng-container>
+</div>

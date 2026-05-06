@@ -1,0 +1,97 @@
+<div class="form-page">
+
+  <a routerLink="/" class="back-link">← Nazad na početnu</a>
+
+  <div class="card overflow-hidden">
+
+    <div class="card-header">
+      <h1 class="card-title">Objavi oglas</h1>
+      <p class="card-sub">Dodajte do 10 slika. Napišite jasno naslov i opis.</p>
+    </div>
+
+    <div class="card-body">
+
+      <div *ngIf="message" class="alert" [ngClass]="success ? 'alert-success' : 'alert-error'">
+        {{ message }}
+      </div>
+
+      <div class="form-grid">
+
+        <div class="field span-2">
+          <label class="label">Naziv</label>
+          <input class="input" [(ngModel)]="title" />
+        </div>
+
+        <div class="field">
+          <label class="label">Cijena (KM)</label>
+          <input class="input" [(ngModel)]="price" type="number"  />
+        </div>
+
+        <div class="field">
+          <label class="label">Lokacija</label>
+          <input class="input" [(ngModel)]="location"  />
+        </div>
+
+        <div class="field">
+          <label class="label">Kategorija</label>
+          <select class="input" [(ngModel)]="categoryId">
+            <option [ngValue]="0">Izaberite kategoriju</option>
+            <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.name }}</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label">Stanje</label>
+          <select class="input" [(ngModel)]="condition">
+            <option value="used">Korišteno</option>
+            <option value="new">Novo</option>
+          </select>
+        </div>
+
+        <div class="field span-2">
+          <label class="label">Opis</label>
+          <textarea class="textarea" rows="5" [(ngModel)]="description">
+          </textarea>
+        </div>
+
+      </div>
+
+      
+      <div class="image-section">
+        <div class="image-header">
+          <div>
+            <div class="section-label">Slike</div>
+            <div class="section-sub">Odaberite do 10 slika.</div>
+          </div>
+          <label class="btn btn-ghost pick-btn">
+            Odaberite slike
+            <input type="file" multiple accept="image/jpeg,image/png,image/webp"
+                   (change)="onFilePick($event)" hidden />
+          </label>
+        </div>
+
+        <div *ngIf="imagePreviews.length > 0" class="preview-grid">
+          <div *ngFor="let p of imagePreviews; let i = index" class="preview-item">
+            <img [src]="p" class="preview-img" />
+            <button class="preview-remove" (click)="removeImage(i)">✕</button>
+            <span *ngIf="i === 0" class="preview-badge">Naslovna</span>
+          </div>
+        </div>
+
+        <div *ngIf="imagePreviews.length === 0" class="image-empty">
+          Nema odabranih slika. Kliknite "Odaberite slike" da dodate slike vašem oglasu.
+        </div>
+      </div>
+
+   
+      <div class="form-actions">
+        <button class="btn btn-ghost" (click)="reset()">Poništi</button>
+        <button class="btn btn-primary" (click)="submit()" [disabled]="loading">
+          {{ loading ? 'Objavljivanje...' : 'Objavi oglas' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

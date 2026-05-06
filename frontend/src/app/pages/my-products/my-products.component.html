@@ -1,0 +1,47 @@
+<div class="list-page">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Moji oglasi</h1>
+      <p class="page-sub">Upravljajte svojim oglasima.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" (click)="loadProducts()">Osvježi</button>
+      <a routerLink="/create" class="btn btn-primary">+ Novi oglas</a>
+    </div>
+  </div>
+
+  <div *ngIf="message" class="alert alert-success">{{ message }}</div>
+  <p *ngIf="loadError" class="state-msg error">{{ loadError }}</p>
+  <p *ngIf="loading"   class="state-msg">Učitavanje...</p>
+
+  <div *ngIf="!loading && products.length === 0 && !loadError" class="empty-state">
+    <div class="empty-icon">📦</div>
+    <div class="empty-title">Nemate aktivnih oglasa</div>
+    <p class="empty-sub">Izradite svoj prvi oglas i krenite prodavati.</p>
+    <a routerLink="/create" class="btn btn-primary">Objavi oglas</a>
+  </div>
+
+  <div *ngIf="products.length > 0" class="product-grid">
+    <div *ngFor="let p of products" class="product-card">
+      <a [routerLink]="['/product', p.id]" class="card-image-wrap">
+        <img *ngIf="p.thumbnail" [src]="imgUrl(p.thumbnail)" class="card-image" />
+        <div *ngIf="!p.thumbnail" class="card-image no-image">Nema slike</div>
+      </a>
+      <div class="card-body">
+        <a [routerLink]="['/product', p.id]" class="card-title">{{ p.title }}</a>
+        <div class="card-price">{{ p.price }} KM</div>
+        <div class="card-meta">{{ p.location }} · {{ p.category_name }}</div>
+        <div class="card-actions">
+          <a [routerLink]="['/edit', p.id]" class="btn btn-ghost card-btn">Uredi</a>
+          <button class="btn btn-danger card-btn"
+                  (click)="deleteProduct(p.id)"
+                  [disabled]="deletingId === p.id">
+            {{ deletingId === p.id ? '...' : 'Izbriši' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

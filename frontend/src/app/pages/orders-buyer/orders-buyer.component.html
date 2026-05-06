@@ -1,0 +1,48 @@
+<div class="orders-page">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Moje narudžbe</h1>
+      <p class="page-sub">Proizvodi koje ste zatražili za kupovinu.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" (click)="loadOrders()">Osvježi</button>
+      <a routerLink="/" class="btn btn-ghost">← Početna</a>
+    </div>
+  </div>
+
+  <div *ngIf="message" class="alert" [ngClass]="success ? 'alert-success' : 'alert-error'">{{ message }}</div>
+  <p *ngIf="loading" class="state-msg">Loading...</p>
+
+  <div *ngIf="!loading && orders.length === 0" class="empty-state">
+    <div class="empty-icon">🛒</div>
+    <div class="empty-title">Nemate aktivnih narudžbi</div>
+    <p class="empty-sub">Kada zatražite kupovinu proizvoda, oni će se pojaviti ovdje.</p>
+    <a routerLink="/" class="btn btn-primary">Pregledaj proizvode</a>
+  </div>
+
+  <div *ngIf="orders.length > 0" class="orders-list">
+    <div *ngFor="let o of orders" class="order-card card">
+      <a [routerLink]="['/product', o.product_id]" class="order-thumb-wrap">
+        <img *ngIf="o.thumbnail" [src]="imgUrl(o.thumbnail)" class="order-thumb" />
+        <div *ngIf="!o.thumbnail" class="order-thumb no-img">—</div>
+      </a>
+      <div class="order-body">
+        <a [routerLink]="['/product', o.product_id]" class="order-title">{{ o.title }}</a>
+        <div class="order-price">{{ o.price }} KM · {{ o.location }}</div>
+        <div class="order-seller">Prodavač: <span class="bold">{{ o.seller_name }}</span></div>
+        <div class="order-meta">Zatraženo: {{ o.created_at }}</div>
+      </div>
+      <div class="order-side">
+        <span class="badge" [ngClass]="statusClass(o.status)">{{ o.status }}</span>
+        <div class="order-btns">
+          
+          <button *ngIf="o.status === 'pending'"
+                  class="btn btn-danger order-btn"
+                  (click)="cancel(o)">Otkaži</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

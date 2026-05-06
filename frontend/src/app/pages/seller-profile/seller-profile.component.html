@@ -1,0 +1,53 @@
+<div class="seller-page">
+
+  <a routerLink="/" class="back-link">← Nazad na početnu</a>
+
+  <p *ngIf="loadingSeller" class="state-msg">Učitavanje...</p>
+  <p *ngIf="error"         class="state-msg error">{{ error }}</p>
+
+  <ng-container *ngIf="seller && !loadingSeller">
+
+    
+    <div class="seller-card card">
+      <div class="seller-avatar-wrap">
+        <img *ngIf="seller.avatar" [src]="imgUrl(seller.avatar)" class="seller-avatar" />
+        <span *ngIf="!seller.avatar" class="seller-avatar-placeholder">👤</span>
+      </div>
+      <div class="seller-info">
+        <h1 class="seller-name">{{ seller.name }}</h1>
+        <div *ngIf="seller.location" class="seller-meta"> {{ seller.location }}</div>
+        <div *ngIf="seller.joined_at" class="seller-meta">Korisnik od {{ seller.joined_at }}</div>
+        <p *ngIf="seller.bio" class="seller-bio">{{ seller.bio }}</p>
+      </div>
+    </div>
+
+    
+    <div class="listings-header">
+      <h2 class="section-title">Oglasi od {{ seller.name }}</h2>
+      <span class="listing-count">{{ products.length }} oglas{{ products.length !== 1 ? 'a' : '' }}</span>
+    </div>
+
+    <p *ngIf="loadingProducts" class="state-msg">Učitavanje...</p>
+
+    <div *ngIf="!loadingProducts && products.length === 0" class="empty-state">
+      <div class="empty-icon">📦</div>
+      <p class="empty-sub">Ovaj korisnik nema aktivnih oglasa.</p>
+    </div>
+
+    <div *ngIf="products.length > 0" class="product-grid">
+      <a *ngFor="let p of products" [routerLink]="['/product', p.id]" class="product-card">
+        <div class="card-image-wrap">
+          <img *ngIf="p.thumbnail" [src]="imgUrl(p.thumbnail)" class="card-image" />
+          <div *ngIf="!p.thumbnail" class="card-image no-image">No image</div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">{{ p.title }}</div>
+          <div class="card-price">{{ p.price }} KM</div>
+          <div class="card-meta">{{ p.location }}</div>
+        </div>
+      </a>
+    </div>
+
+  </ng-container>
+
+</div>

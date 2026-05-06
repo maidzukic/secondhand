@@ -1,0 +1,113 @@
+<div class="profile-page">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Moj profil</h1>
+      <p class="page-sub">Ažurirajte vaše javne informacije.</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/" class="btn btn-ghost">← Početna</a>
+      <button class="btn btn-ghost" (click)="loadProfile()">Osvježi</button>
+    </div>
+  </div>
+
+  <div *ngIf="!currentUser" class="card card-pad">
+    <p class="bold">Niste prijavljeni.</p>
+    <a routerLink="/login" class="btn btn-primary top-gap">Idi na prijavu</a>
+  </div>
+
+  <div *ngIf="currentUser" class="profile-grid">
+
+  
+    <aside class="sidebar-col">
+
+      <div class="card card-pad">
+        <div class="avatar-row">
+          <div class="avatar-wrap">
+            <img *ngIf="profileData?.avatar" [src]="imgUrl(profileData!.avatar!)" class="avatar-img" />
+            <span *ngIf="!profileData?.avatar" class="avatar-placeholder">👤</span>
+          </div>
+          <div>
+            <div class="bold">{{ profileData?.name ?? currentUser.name }}</div>
+            <div class="muted small">{{ profileData?.email ?? currentUser.email }}</div>
+          </div>
+        </div>
+
+        <div class="info-list">
+          <div class="info-item">
+            <span class="info-key">Rola</span>
+            <span class="badge badge-user">{{ currentUser.role }}</span>
+          </div>
+          <div class="info-item" *ngIf="profileData?.location">
+            <span class="info-key">Lokacija</span>
+            <span class="muted small">{{ profileData!.location }}</span>
+          </div>
+          <div class="info-item" *ngIf="profileData?.joined_at">
+            <span class="info-key">Pridružio se</span>
+            <span class="muted small">{{ profileData!.joined_at }}</span>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card card-pad">
+        <div class="section-title">Promijeni profilnu sliku</div>
+
+        <div *ngIf="avatarMessage" class="alert" [ngClass]="avatarError ? 'alert-error' : 'alert-success'">
+          {{ avatarMessage }}
+        </div>
+
+        <div class="field top-gap">
+          <input type="file" accept="image/jpeg,image/png,image/webp" (change)="pickAvatar($event)" />
+        </div>
+
+        <button class="btn btn-primary full-width top-gap"
+                (click)="uploadAvatar()"
+                [disabled]="!avatarFile || savingAvatar">
+          {{ savingAvatar ? 'Uploading...' : 'Upload avatar' }}
+        </button>
+      </div>
+
+    </aside>
+
+    
+    <div class="main-col">
+
+      <div *ngIf="loadError" class="alert alert-error">{{ loadError }}</div>
+      <p *ngIf="loading" class="muted">Loading...</p>
+
+      <div *ngIf="!loading" class="card card-pad">
+        <div class="section-title">Uredi informacije</div>
+
+        <div *ngIf="saveMessage" class="alert top-gap" [ngClass]="saveError ? 'alert-error' : 'alert-success'">
+          {{ saveMessage }}
+        </div>
+
+        <div class="form-grid">
+          <div class="field span-2">
+            <label class="label">Ime</label>
+            <input class="input" [(ngModel)]="form.name" placeholder="Vaše ime" />
+          </div>
+          <div class="field span-2">
+            <label class="label">Lokacija</label>
+            <input class="input" [(ngModel)]="form.location" placeholder="Grad, Država" />
+          </div>
+          <div class="field span-2">
+            <label class="label">Opis</label>
+            <textarea class="textarea" rows="4" [(ngModel)]="form.bio"
+                      placeholder="Recite kupcima nešto o sebi..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-ghost" (click)="resetForm()">Resetuj</button>
+          <button class="btn btn-primary" (click)="save()" [disabled]="saving">
+            {{ saving ? 'Spremanje...' : 'Sačuvaj promjene' }}
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,122 @@
+  <section class="hero">
+    
+    <h1 class="hero__title">
+      Tvoje mjesto <br> za kupovinu i prodaju
+    </h1>
+    <p class="hero__subtitle">
+      Pronađite sjajne ponude u vašoj blizini. Izravno kontaktirajte prodavače, pregovarajte i sklapajte poslove - sve na jednom mjestu.
+    </p>
+    <div class="hero__actions">
+      <a routerLink="/create" class="hero__btn hero__btn--primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Objavi oglas
+      </a>
+      <button class="hero__btn hero__btn--ghost" (click)="scrollToProducts()">
+        Pretraži proizvode
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+      </button>
+    </div>
+  </section>
+
+  
+<div class="home-page">
+
+  
+  
+  <section class="search-bar">
+    <div class="search-bar__title">Pretraga</div>
+    <div class="search-bar__row">
+      <input class="s-input" [(ngModel)]="searchQuery" placeholder="Pretraživanje po naslovu ili opisu..." />
+      <input class="s-input" [(ngModel)]="location"    placeholder="Lokacija" />
+      <input class="s-input" [(ngModel)]="minPrice"    type="number" placeholder="Minimalna cijena (KM)" />
+      <input class="s-input" [(ngModel)]="maxPrice"    type="number" placeholder="Maksimalna cijena (KM)" />
+    </div>
+    <div class="search-bar__row2">
+      <select class="s-select" [(ngModel)]="categoryId">
+        <option [ngValue]="0">Sve kategorije</option>
+        <option *ngFor="let c of trending" [ngValue]="c.id">{{ c.name }}</option>
+      </select>
+      <select class="s-select" [(ngModel)]="sort">
+        <option value="newest">Najnovije</option>
+        <option value="price_asc">Cijena: Niska → Visoka</option>
+        <option value="price_desc">Cijena: Visoka → Niska</option>
+      </select>
+      <button class="s-btn s-btn--primary" (click)="applyFilters()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Pretraži
+      </button>
+      <button class="s-btn s-btn--ghost" (click)="resetFilters()">Očisti</button>
+    </div>
+  </section>
+
+  
+  <section>
+    <div class="section-header">
+      <h2 class="section-title">Kategorije</h2>
+      <span *ngIf="trendingLoading" class="products-info">Učitavanje...</span>
+    </div>
+    <div class="categories-row">
+      <button *ngFor="let c of trending"
+              (click)="selectCategory(c)"
+              class="cat-chip"
+              [class.cat-chip--active]="categoryId == c.id">
+        {{ c.name }}
+        <span class="cat-chip__count">{{ c.products_count }}</span>
+      </button>
+    </div>
+  </section>
+
+  
+  <section class="products-section" id="products">
+    <div class="section-header">
+      <h2 class="section-title">Proizvodi</h2>
+      <div class="products-info">
+        <div *ngIf="loading" class="loading-pulse"><span></span><span></span><span></span></div>
+        <span *ngIf="!loading">{{ products.length }} prikazano</span>
+      </div>
+    </div>
+
+    <p *ngIf="loadError" class="load-error">{{ loadError }}</p>
+
+    <div class="products-grid" *ngIf="products.length > 0">
+      <a *ngFor="let p of products" [routerLink]="['/product', p.id]" class="product-card">
+        <div class="product-card__img-wrap">
+          <img *ngIf="p.thumbnail" [src]="imgUrl(p.thumbnail)" class="product-card__img" [alt]="p.title" />
+          <div *ngIf="!p.thumbnail" class="product-card__no-img">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <span class="cond-badge"
+                [class.cond-badge--new]="p.product_condition === 'new'"
+                [class.cond-badge--used]="p.product_condition === 'used'">
+            {{ p.product_condition === 'new' ? 'Novo' : 'Polovno' }}
+          </span>
+        </div>
+
+        <div class="product-card__body">
+          <div class="product-card__top">
+            <div class="product-card__title">{{ p.title }}</div>
+            <span class="product-card__cat">{{ p.category_name }}</span>
+          </div>
+          <div class="product-card__price">{{ p.price }} <span>KM</span></div>
+          <div class="product-card__meta">
+            <div class="product-card__seller">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <strong>{{ p.seller_name }}</strong>
+            </div>
+            <div class="product-card__location" *ngIf="p.location">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              {{ p.location }}
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && products.length === 0">
+      <div class="empty-state__icon">🔍</div>
+      <div class="empty-state__text">Nema pronađenih proizvoda</div>
+      <div class="empty-state__sub">Pokušajte promijeniti filtere pretrage ili ih očistite.</div>
+    </div>
+  </section>
+
+</div>

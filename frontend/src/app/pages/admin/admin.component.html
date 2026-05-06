@@ -1,0 +1,233 @@
+<div class="admin-page">
+
+  
+  <div class="page-header">
+    <div>
+      <div class="page-label">
+        <span class="status-dot"></span> Admin Panel
+      </div>
+      <h1 class="page-title">Nadzorna ploča</h1>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/" class="btn btn-ghost">← Početna</a>
+      <button class="btn btn-ghost" (click)="loadStats()">Osvježi</button>
+    </div>
+  </div>
+
+  
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Korisnici</div>
+      <div class="stat-value">{{ stats?.users ?? '—' }}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" style="width:66%;background:#0f172a"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Proizvodi</div>
+      <div class="stat-value">{{ stats?.products ?? '—' }}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" style="width:50%;background:#4f46e5"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Komentari</div>
+      <div class="stat-value">{{ stats?.comments ?? '—' }}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" style="width:33%;background:#059669"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Narudžbe</div>
+      <div class="stat-value">{{ stats?.orders ?? '—' }}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" style="width:40%;background:#d97706"></div></div>
+    </div>
+  </div>
+
+  
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab==='overview'"  (click)="setTab('overview')">Pregled</button>
+    <button class="tab-btn" [class.active]="activeTab==='products'"  (click)="setTab('products')">Proizvodi</button>
+    <button class="tab-btn" [class.active]="activeTab==='users'"     (click)="setTab('users')">Korisnici</button>
+    <button class="tab-btn" [class.active]="activeTab==='comments'"  (click)="setTab('comments')">Komentari</button>
+  </div>
+
+
+  <div *ngIf="activeTab==='overview'" class="tab-content">
+    <div class="overview-grid">
+      <div class="card card-pad">
+        <div class="section-title">Brze radnje</div>
+        <div class="actions-grid">
+          <button class="action-card" (click)="setTab('products')">
+            <div class="action-title">Upravljanje proizvodima</div>
+            <div class="action-sub">Pretraživanje i brisanje oglasa</div>
+          </button>
+          <button class="action-card" (click)="setTab('users')">
+            <div class="action-title">Upravljanje korisnicima</div>
+            <div class="action-sub">Pretraživanje i brisanje korisnika</div>
+          </button>
+          <button class="action-card span-2" (click)="setTab('comments')">
+            <div class="action-title">Upravljanje komentarima</div>
+            <div class="action-sub">Uklanjanje spama ili neprikladnih komentara</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="section-title">Informacije o sesiji</div>
+        <div class="info-rows">
+          <div class="info-row">
+            <span class="info-key">Rola</span>
+            <span class="badge badge-admin">admin</span>
+          </div>
+          <div class="info-row">
+            <span class="info-key">Status</span>
+            <span class="status-active"><span class="status-dot green"></span>Active</span>
+          </div>
+        </div>
+        <button class="btn btn-primary full-width top-gap" (click)="loadStats()">Osvježi statistiku</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="activeTab==='products'" class="tab-content">
+    <div class="card card-pad">
+      <div class="table-toolbar">
+        <div>
+          <div class="section-title">Proizvodi</div>
+          <div class="section-sub">Pretraživanje i brisanje oglasa.</div>
+        </div>
+        <div class="search-row">
+          <input class="input" [(ngModel)]="productSearch" placeholder="Pretraži naslov ili prodavača..." />
+          <button class="btn btn-primary" (click)="loadProducts()">Pretraži</button>
+        </div>
+      </div>
+
+      <p *ngIf="productsLoading" class="loading-text">Loading...</p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Naziv</th><th>Cijena</th><th>Lokacija</th><th>Prodavač</th><th class="right">Akcija</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of products">
+              <td class="muted">{{ p.id }}</td>
+              <td>
+                <div class="bold">{{ p.title }}</div>
+                <div class="small muted">{{ p.category_name }}</div>
+              </td>
+              <td class="bold">{{ p.price }} KM</td>
+              <td class="muted">{{ p.location }}</td>
+              <td class="muted">{{ p.seller_name }}</td>
+              <td class="right">
+                <button class="btn btn-danger" (click)="deleteProduct(p.id)">Obriši</button>
+              </td>
+            </tr>
+            <tr *ngIf="!productsLoading && products.length === 0">
+              <td colspan="6" class="empty-row">Nema pronađenih proizvoda.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="activeTab==='users'" class="tab-content">
+    <div class="card card-pad">
+      <div class="table-toolbar">
+        <div>
+          <div class="section-title">Korisnici</div>
+          <div class="section-sub">Pretraživanje i brisanje korisničkih računa.</div>
+        </div>
+        <div class="search-row">
+          <input class="input" [(ngModel)]="userSearch" placeholder="Pretraži ime ili email..." />
+          <button class="btn btn-primary" (click)="loadUsers()">Pretraži</button>
+        </div>
+      </div>
+
+      <p *ngIf="usersLoading" class="loading-text">Loading...</p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Ime</th><th>Email</th><th>Rola</th><th>Proizvodi</th><th class="right">Akcija</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of users">
+              <td class="muted">{{ u.id }}</td>
+              <td class="bold">{{ u.name }}</td>
+              <td class="muted">{{ u.email }}</td>
+              <td>
+                <span class="badge" [ngClass]="u.role === 'admin' ? 'badge-admin' : 'badge-user'">{{ u.role }}</span>
+              </td>
+              <td class="muted">{{ u.products_count }}</td>
+              <td class="right">
+                <button class="btn btn-danger" (click)="deleteUser(u.id)" [disabled]="u.role === 'admin'">
+                  Delete
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="!usersLoading && users.length === 0">
+              <td colspan="6" class="empty-row">Nema pronađenih korisnika.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="activeTab==='comments'" class="tab-content">
+    <div class="card card-pad">
+      <div class="table-toolbar">
+        <div>
+          <div class="section-title">Komentari</div>
+          <div class="section-sub">Uklanjanje neželjenih ili neprikladnih komentara.</div>
+        </div>
+        <div class="search-row">
+          <input class="input" [(ngModel)]="commentSearch" placeholder="Pretraži tekst ili korisnika..." />
+          <button class="btn btn-primary" (click)="loadComments()">Pretraži</button>
+        </div>
+      </div>
+
+      <p *ngIf="commentsLoading" class="loading-text">Loading...</p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Komentar</th><th>Autor</th><th>Proizvod</th><th>Datum</th><th class="right">Akcija</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of comments">
+              <td class="muted">{{ c.id }}</td>
+              <td>
+                <div class="bold">{{ c.comment_text }}</div>
+              </td>
+              <td>
+                <div class="bold">{{ c.author_name }}</div>
+                <div class="small muted">{{ c.author_email }}</div>
+              </td>
+              <td>
+                <a [routerLink]="['/product', c.product_id]" class="table-link">{{ c.product_title }}</a>
+              </td>
+              <td class="muted small">{{ c.created_at }}</td>
+              <td class="right">
+                <button class="btn btn-danger" (click)="deleteComment(c.id)">Delete</button>
+              </td>
+            </tr>
+            <tr *ngIf="!commentsLoading && comments.length === 0">
+              <td colspan="6" class="empty-row">Nema pronađenih komentara.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="toast.message()" class="toast">{{ toast.message() }}</div>
+
+</div>

@@ -1,0 +1,162 @@
+.profile-page { 
+  max-width: 1000px; 
+  margin: 0 auto; 
+  padding: 1.5rem 1rem; 
+}
+
+.page-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: flex-start; 
+  flex-wrap: wrap; 
+  gap: 1rem; 
+  margin-bottom: 1.5rem; 
+}
+
+.page-title  { 
+  font-size: 1.8rem; 
+  font-weight: 900; 
+  color: #0f172a; 
+}
+
+.page-sub    { 
+  font-size: 0.85rem; 
+  color: #64748b; 
+  margin-top: 0.2rem; 
+}
+
+.header-actions { 
+  display: flex; 
+  gap: 0.5rem; 
+}
+
+.profile-grid { 
+  display: grid; 
+  grid-template-columns: 1fr; 
+  gap: 1.25rem; 
+}
+
+@media (min-width: 1024px) { .profile-grid { grid-template-columns: 280px 1fr; } }
+
+.sidebar-col, .main-col { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 1.25rem; 
+}
+
+.avatar-row { 
+  display: flex; 
+  align-items: center; 
+  gap: 0.75rem; 
+}
+
+.avatar-wrap {
+  width: 52px; height: 52px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatar-img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+}
+
+.avatar-placeholder { 
+  font-size: 1.5rem; 
+}
+
+.info-list  { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.5rem; 
+  margin-top: 1rem; 
+}
+
+.info-item  { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  font-size: 0.85rem; 
+}
+
+.info-key   { 
+  color: #64748b; 
+}
+
+.section-title { 
+  font-weight: 800; 
+  color: #0f172a; 
+  margin-bottom: 0.25rem; 
+}
+
+.form-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 1rem; 
+  margin-top: 1rem; 
+}
+
+.span-2    { 
+  grid-column: span 2; 
+}
+.field     { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.3rem; 
+}
+.label     { 
+  font-size: 0.85rem; 
+  color: #374151;
+ }
+
+.form-actions { 
+  display: flex; 
+  justify-content: flex-end; 
+  gap: 0.5rem; 
+  margin-top: 1.25rem; 
+}
+
+.bold    { 
+  font-weight: 700; 
+  color: #0f172a; 
+}
+
+.muted   { 
+  color: #64748b; 
+}
+
+.small   { 
+  font-size: 0.8rem; 
+}
+
+.full-width { 
+  width: 100%; 
+}
+
+.top-gap { 
+  margin-top: 0.75rem; 
+}
+
+.alert { 
+  padding: 0.6rem 0.8rem; 
+  border-radius: 0.75rem; 
+  font-size: 0.85rem; 
+  border: 1px solid; 
+}
+
+.alert-success { 
+  background: #f0fdf4; 
+  border-color: #bbf7d0; 
+  color: #15803d; 
+}
+
+.alert-error   { 
+  background: #fff1f2; 
+  border-color: #fecdd3; 
+  color: #be123c; 
+}

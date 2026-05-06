@@ -1,0 +1,43 @@
+<div class="list-page">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Omiljeni</h1>
+      <p class="page-sub">Proizvodi koje ste sačuvali.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" (click)="loadFavorites()">Osvježi</button>
+      <a routerLink="/" class="btn btn-ghost">← Početna</a>
+    </div>
+  </div>
+
+  <p *ngIf="loading" class="state-msg">Učitavanje...</p>
+  <p *ngIf="loadError" class="state-msg error">{{ loadError }}</p>
+
+  <div *ngIf="!loading && !loadError && favorites.length === 0" class="empty-state">
+    <div class="empty-icon">🤍</div>
+    <div class="empty-title">Nema omiljenih</div>
+    <p class="empty-sub">Pretražite proizvode i kliknite na Sačuvaj da ih sačuvate ovdje.</p>
+    <a routerLink="/" class="btn btn-primary">Pretraži proizvode</a>
+  </div>
+
+  <div *ngIf="favorites.length > 0" class="product-grid">
+    <div *ngFor="let p of favorites" class="product-card">
+      <a [routerLink]="['/product', p.id]" class="card-image-wrap">
+        <img *ngIf="p.thumbnail" [src]="imgUrl(p.thumbnail)" class="card-image" />
+        <div *ngIf="!p.thumbnail" class="card-image no-image">Nema slike</div>
+      </a>
+      <div class="card-body">
+        <a [routerLink]="['/product', p.id]" class="card-title">{{ p.title }}</a>
+        <div class="card-price">{{ p.price }} KM</div>
+        <div class="card-meta">{{ p.location }}</div>
+        <button class="btn btn-ghost remove-btn"
+                (click)="remove(p)"
+                [disabled]="removingId === p.id">
+          {{ removingId === p.id ? 'Brišem...' : '✕ Obriši' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

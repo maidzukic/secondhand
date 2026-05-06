@@ -1,0 +1,166 @@
+<div class="chat-container">
+  <div class="chat-wrapper" [class.has-active-chat]="activeChat">
+
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>Messages</h2>
+        
+        <div class="filter-nav">
+          <button [class.active]="filter === 'all'" (click)="filter = 'all'">All</button>
+          <button [class.active]="filter === 'unread'" (click)="filter = 'unread'">Unread</button>
+        </div>
+      </div>
+
+      <div class="chat-list">
+        <div *ngFor="let c of filteredChats" 
+             class="chat-item" 
+             [class.active]="activeChat?.chat_id === c.chat_id"
+             (click)="openChat(c)">
+
+          <div class="avatar-wrapper">
+            <img [src]="img(c.other_user_avatar)" alt="">
+            <span *ngIf="c.unread_count > 0" class="unread-badge">{{ c.unread_count }}</span>
+          </div>
+
+          <div class="chat-info">
+            <div class="chat-info-row">
+              <div class="user-name">{{ c.other_user_name }}</div>
+              <div class="chat-time">{{ formatTime(c.last_message_at) }}</div>
+            </div>
+            <div class="last-msg">{{ c.last_message || 'New conversation' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="chat-main">
+    <div class="chat-main-header">
+    <div class="chat-header-inner">
+
+      
+      <button *ngIf="activeChat" 
+              (click)="closeChat()" 
+              class="back-button">
+        ← Nazad
+      </button>
+
+      
+      <div *ngIf="activeChat; else emptyHeader" class="header-user-info">
+        <img [src]="img(activeChat.other_user_avatar || 'default-avatar.png')" 
+             alt="" 
+             class="header-avatar">
+        
+        <div class="header-details">
+          <h4 class="header-name">{{ activeChat.other_user_name }}</h4>
+          <span class="header-status">● online</span>
+        </div>
+      </div>
+
+      <ng-template #emptyHeader>
+        <div class="header-empty">Izaberi razgovor</div>
+      </ng-template>
+
+      
+      <button *ngIf="activeChat" 
+              (click)="deleteChat(activeChat, $event)" 
+              class="delete-chat-btn"
+              title="Obriši razgovor">
+        Obriši
+      </button>
+
+    </div>
+  </div>
+
+  
+  <div class="messages-viewport" #msgsEl>
+      <div *ngIf="activeChat; else noChatSelected">
+
+    <div *ngFor="let m of messages" class="message-row" [class.is-me]="isMe(m)">
+      <div class="message-bubble">
+
+        
+        <ng-container *ngIf="m.file_type === 'image' || (m.file_path && 
+          (m.file_path.endsWith('.jpg') || m.file_path.endsWith('.png') || 
+           m.file_path.endsWith('.jpeg') || m.file_path.endsWith('.webp') || 
+           m.file_path.endsWith('.gif')))">
+          <div class="image-message">
+            <img [src]="img(m.file_path)" 
+                 alt="Slika" 
+                 class="chat-image"
+                 (click)="openImage(m.file_path)">
+          </div>
+        </ng-container>
+
+        
+        <ng-container *ngIf="m.file_name && ! (m.file_type === 'image' || 
+          (m.file_path && (m.file_path.endsWith('.jpg') || m.file_path.endsWith('.png') || 
+                           m.file_path.endsWith('.jpeg') || m.file_path.endsWith('.webp'))))">
+          <div class="attachment-area">
+            <a [href]="img(m.file_path || m.file_name)" target="_blank" class="file-link">
+              📄 {{ m.file_name }}
+            </a>
+          </div>
+        </ng-container>
+
+        
+        <div *ngIf="m.message_text">{{ m.message_text }}</div>
+
+        
+        <small class="msg-time">
+          {{ formatTime(m.created_at) }}
+          <span *ngIf="isMe(m)" class="seen-status">
+            {{ m.is_read == 1 ? '✓ Seen' : '✓ Sent' }}
+          </span>
+        </small>
+      </div>
+    </div>
+
+  </div>
+
+  
+  <ng-template #noChatSelected>
+    <div class="empty-state">
+      <div class="empty-icon">💬</div>
+      <p>Odaberite razgovor</p>
+    </div>
+  </ng-template>
+
+      
+      <div class="chat-footer" *ngIf="activeChat">
+  
+  <div class="input-container">
+
+    
+    <label class="attachment-btn" title="Priloži fajl ili sliku">
+      📎
+      <input type="file" 
+             (change)="onFileSelected($event)" 
+             style="display: none;">
+    </label>
+
+    
+    <input type="text" 
+           [(ngModel)]="text" 
+           (keyup.enter)="send()" 
+           placeholder="Type a message...">
+
+    
+    <button class="send-button" (click)="send()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.874L5.999 12zm0 0h7.07" />
+      </svg>
+    </button>
+  </div>
+
+  
+  <div *ngIf="attachPreview" class="preview-bar">
+    <img [src]="attachPreview" alt="Preview">
+    <button (click)="removeAttachment()" class="remove-preview">×</button>
+  </div>
+
+</div>
+
+    </div>
+  </div>
+</div>

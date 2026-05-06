@@ -1,0 +1,121 @@
+<div class="form-page">
+
+  <div class="page-nav">
+    <a routerLink="/my-products" class="back-link">← Moji oglasi</a>
+  </div>
+
+  <p *ngIf="loadingData" class="state-msg">Loading...</p>
+  <p *ngIf="loadError"   class="state-msg error">{{ loadError }}</p>
+
+  <ng-container *ngIf="product && !loadingData">
+
+    
+    <div class="card overflow-hidden section-gap">
+      <div class="card-header">
+        <h1 class="card-title">Uredi oglas</h1>
+        <p class="card-sub">Ažurirajte detalje vašeg proizvoda.</p>
+      </div>
+      <div class="card-body">
+
+        <div *ngIf="saveMessage" class="alert" [ngClass]="saveSuccess ? 'alert-success' : 'alert-error'">
+          {{ saveMessage }}
+        </div>
+
+        <div class="form-grid">
+          <div class="field span-2">
+            <label class="label">Naziv</label>
+            <input class="input" [(ngModel)]="product.title" />
+          </div>
+          <div class="field">
+            <label class="label">Cijena (KM)</label>
+            <input class="input" [(ngModel)]="product.price" type="number" />
+          </div>
+          <div class="field">
+            <label class="label">Lokacija</label>
+            <input class="input" [(ngModel)]="product.location" />
+          </div>
+          <div class="field">
+            <label class="label">Kategorija</label>
+            <select class="input" [(ngModel)]="product.category_id">
+              <option [ngValue]="0">Izaberite kategoriju</option>
+              <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.name }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label">Stanje</label>
+            <select class="input" [(ngModel)]="product.product_condition">
+              <option value="used">Korišteno</option>
+              <option value="new">Novo</option>
+            </select>
+          </div>
+          <div class="field span-2">
+            <label class="label">Opis</label>
+            <textarea class="textarea" rows="5" [(ngModel)]="product.description"></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" (click)="saveDetails()" [disabled]="saving">
+            {{ saving ? 'Spremanje...' : 'Spremi promjene' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="card overflow-hidden">
+      <div class="card-header">
+        <h2 class="card-title">Slike</h2>
+        <p class="card-sub">{{ images.length }} / 10 slika. Izbrišite ili dodajte više.</p>
+      </div>
+      <div class="card-body">
+
+        <div *ngIf="imageMessage" class="alert" [ngClass]="imageSuccess ? 'alert-success' : 'alert-error'">
+          {{ imageMessage }}
+        </div>
+
+        
+        <div *ngIf="images.length > 0" class="preview-grid">
+          <div *ngFor="let img of images; let i = index" class="preview-item">
+            <img [src]="imgUrl(img.image_path)" class="preview-img" />
+            <button class="preview-remove"
+                    (click)="deleteImage(img)"
+                    [disabled]="deletingImageId === img.id">
+              {{ deletingImageId === img.id ? '…' : '✕' }}
+            </button>
+            <span *ngIf="i === 0" class="preview-badge">Naslovna</span>
+          </div>
+        </div>
+        <p *ngIf="images.length === 0" class="image-empty">Nema slika.</p>
+
+        
+        <div *ngIf="images.length < 10" class="upload-section">
+          <div class="upload-label">Dodajte slike</div>
+          <div class="upload-row">
+            <label class="btn btn-ghost pick-btn">
+              Odaberite datoteke
+              <input type="file" multiple accept="image/jpeg,image/png,image/webp"
+                     (change)="onPickFiles($event)" hidden />
+            </label>
+            <button *ngIf="newFiles.length"
+                    class="btn btn-primary"
+                    (click)="uploadImages()"
+                    [disabled]="uploading">
+              {{ uploading ? 'Ažuriranje...' : 'Ažuriraj '+ (newFiles.length === 1 ? 'sliku' : newFiles.length + ' slike') }}
+            </button>
+          </div>
+
+          <div *ngIf="newPreviews.length > 0" class="preview-grid top-gap">
+            <div *ngFor="let p of newPreviews; let i = index" class="preview-item">
+              <img [src]="p" class="preview-img" />
+              <button class="preview-remove" (click)="removeNewFile(i)">✕</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

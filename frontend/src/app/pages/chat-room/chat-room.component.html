@@ -1,0 +1,60 @@
+<div class="room-page">
+
+  <div class="room-nav">
+    <a routerLink="/chats" class="btn btn-ghost">← Chat</a>
+    <div class="nav-right">
+      <button class="btn btn-ghost" (click)="loadMessages()">Osvježi</button>
+      <a routerLink="/" class="btn btn-ghost">Početna</a>
+    </div>
+  </div>
+
+  <div *ngIf="!currentUser" class="card card-pad">
+    <p>Morate biti prijavljeni da biste slali poruke.</p>
+    <a routerLink="/login" class="btn btn-primary top-gap">Prijavite se</a>
+  </div>
+
+  <div *ngIf="currentUser" class="chat-card card">
+
+    
+    <div class="chat-card-header">
+      <span class="status-dot"></span>
+      <div>
+        <div class="chat-title">Chat #{{ chatId }}</div>
+        <div class="chat-sub">Osvježava se automatski svakih 5 sekundi</div>
+      </div>
+    </div>
+
+    
+    <div id="msgs" class="messages-area">
+      <p *ngIf="loading" class="msgs-loading">Učitavanje poruka...</p>
+
+      <div *ngFor="let m of messages" class="msg-row" [class.me]="isMyMessage(m)">
+        <div class="msg-bubble" [class.me]="isMyMessage(m)" [class.them]="!isMyMessage(m)">
+          <div class="msg-text">{{ m.message_text }}</div>
+          <div class="msg-meta">
+            {{ isMyMessage(m) ? 'Vi' : (m.sender_name || 'User') }} · {{ m.created_at }}
+          </div>
+        </div>
+      </div>
+
+      <p *ngIf="!loading && messages.length === 0" class="msgs-empty">
+        Nema poruka. Recite zdravo i započnite razgovor!
+      </p>
+    </div>
+
+  
+    <div class="input-area">
+      <p *ngIf="error" class="send-error">{{ error }}</p>
+      <div class="input-row">
+        <input class="input"
+               [(ngModel)]="text"
+               placeholder="Type a message..."
+               (keydown.enter)="send()" />
+        <button class="btn btn-primary" (click)="send()" [disabled]="sending || !text.trim()">
+          {{ sending ? '...' : 'Pošalji' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
