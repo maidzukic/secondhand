@@ -77,7 +77,7 @@ export class HomeComponent implements OnInit {
       sort:        this.sort,
     }).subscribe({
       next:  (data) => { this.products = data ?? []; this.loading = false; },
-      error: (err)  => { this.loadError = err?.error?.message ?? 'Search failed'; this.loading = false; },
+      error: (err)  => { this.loadError = err?.error?.message ?? 'Pretrega neuspješna'; this.loading = false; },
     });
   }
 
