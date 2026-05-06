@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit {
 
     this.productsService.list({ random: 1, limit: 20 }).subscribe({
       next:  (data) => { this.products = data ?? []; this.loading = false; },
-      error: (err)  => { this.loadError = err?.error?.message ?? 'Failed to load products'; this.loading = false; },
+      error: (err)  => { this.loadError = err?.error?.message ?? 'Greška prilikom učitavanja'; this.loading = false; },
     });
   }
 
